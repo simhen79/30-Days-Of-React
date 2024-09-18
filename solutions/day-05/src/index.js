@@ -5,90 +5,111 @@ import cssLogo from './images/css_logo.png';
 import htmlLogo from './images/html_logo.png';
 import reactLogo from './images/react_logo.png';
 
-const User = () => (
+const User = ({firstName, image}) => (
   <>
-    <img src={aimage} alt='Aimage' />
+    <img src={image} alt={firstName} />
   </>
 );
 
-const logos = (
-  <>
-    <img src={cssLogo} alt='' />
-    <img src={htmlLogo} alt='' />
-    <img src={reactLogo} alt='' />
-  </>
-);
+const Age = (props) => <div>The person is {props.age} years old.</div>
+const Weight = (props) => (<p>The weight of the object on earth is {props.weight} N.</p>)
 
-const welcome = 'Welcome to 30 Days Of React'
-const title = 'Getting Started React'
-const subtitle = 'JavaScript Library'
-const author = {
-  firstName: 'Asabeneh',
-  lastName: 'Yetayeh',
+const Number = () => {
+  const currentYear = 2024;
+  const birthYear = 1979;
+  const age = currentYear - birthYear;
+  const gravity = 9.81
+  const mass = 75
+  return (
+    <div>
+      <Age age={age} />
+      <Weight weight={gravity * mass} />
+      <Status status={age >= 18}/>
+    </div>
+  )
 }
-const date = 'Oct 2, 2020'
+
+const showDate = (time) => {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  const month = months[time.getMonth()].slice(0,3);
+  const year = time.getFullYear();
+  const date = time.getDate();
+  return ` ${month} ${date} ${year}`;
+};
+
+const Status = (props) => {
+  const status = props.status ? 'Old enough to drive' : 'Too young to drive';
+  return <p>{status}</p>
+}
+
+const Button = (props) => <button onClick={props.onClick}>{props.text}</button>
 
 // JSX element, header
-const Header = () => (
-  <header>
+const Header = ({
+  data: {
+    welcome,
+    title,
+    subtitle,
+    author: {firstName, lastName },
+    date
+  }
+}) => {
+  return (<header>
     <div className='header-wrapper'>
       <h1>{welcome}</h1>
       <h2>{title}</h2>
       <h3>{subtitle}</h3>
       <p>
-        Instructor: {author.firstName} {author.lastName}
+        {firstName} {lastName}
       </p>
-      <small>Date: {date}</small>
+      <small>Date: {showDate(date)}</small>
     </div>
-  </header>
-)
+  </header>);
+}
 
-const numOne = 3
-const numTwo = 2
-
-const result = (
-  <p>
-    {numOne} + {numTwo} = {numOne + numTwo}
-  </p>
-)
-
-const yearBorn = 1820
-const currentYear = new Date().getFullYear()
-const age = currentYear - yearBorn
-const personAge = (
-  <p>
-    {' '}
-    {author.firstName} {author.lastName} is {age} years old
-  </p>
-)
-
-const UserCard = () => (
+const UserCard = ({user: {firstName, lastName, image}}) => {
+  return (
   <div className='user-card'>
-    <User />
-    <h2>Some Image</h2>
+    <User firstName={firstName} image={image} />
+    <h2>{firstName} {lastName}</h2>
   </div>
-)
+  )
+}
 
 // JSX element, main
-const TechList = () => {
-  const techs = ['HTML', 'CSS', 'JavaScript'];
-  const techsFormatted = techs.map((tech) => <li>{tech}</li>)
+const TechList = ({techs}) => {
+  const techsFormatted = techs.map((tech) => <li key={tech}>{tech}</li>)
   return techsFormatted;
 }
 
 // JSX element, main
-const Main = () => (
+const Main = ({user, techs}) => {
+  return (
   <main>
     <div className='main-wrapper'>
       <p>Prerequisite to get started react.js:</p>
       <ul>
-        <TechList />
+        <TechList techs={techs} />
       </ul>
-      <UserCard />
+      <UserCard user={user} />
       <HexaColor />
     </div>
   </main>
-);
+  );
+}
 
 const hexaColor = () => {
   const str = '0123456789abcdef';
@@ -102,25 +123,56 @@ const hexaColor = () => {
 
 const HexaColor = () => <div>{hexaColor()}</div>
 
-const copyRight = 'Copyright 2020'
-
 // JSX element, footer
-const Footer = () => (
+const Footer = ({copyRight}) => (
   <footer>
     <div className='footer-wrapper'>
-      <p>{copyRight}</p>
+      <p>Copyright {copyRight.getFullYear()} &copy;</p>
     </div>
   </footer>
 )
 
 // JSX element, app
-const App = () => (
-  <div className='app'>
-    <Header />
-    <Main />
-    <Footer />
+const App = () => {
+  const data = {
+    welcome: 'Welcome to 30 Days Of React',
+    title: 'Getting Started React',
+    subtitle: 'JavaScript Library',
+    author: {
+      firstName: 'Asabeneh',
+      lastName: 'Yetayeh'
+    },
+    date: new Date()
+  };
+
+  const user = { ...data.author, image: aimage };
+  const techs = ['HTML', 'CSS', 'JavaScript'];
+  
+  const sayHi = () => {
+    alert('Hi');
+  }
+
+  const greetPeople = () => {
+    alert('Welcome to 30 Days Of React Challenge, 2020');
+  }
+
+  return (
+    <div className='app'>
+    <Header 
+      data={data}
+    />
+    <Number />
+    <Button onClick={sayHi} text="Say Hi" />
+    <Button onClick={greetPeople} text="Greet People" />
+    <Button onClick={() => alert('MSP')} text="MSP" />
+    <Main
+      user={user} 
+      techs={techs} 
+    />
+    <Footer copyRight={data.date}/>
   </div>
-)
+  );
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
